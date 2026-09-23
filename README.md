@@ -70,6 +70,13 @@ This creates:
 - `outputs/models/best_model.joblib`
 - plots in `outputs/plots/`
 
+The repo also includes a checked-in sample run under `docs/demo-assets/sample-run/` so reviewers can see example metrics and plots without running the command first:
+
+- `docs/demo-assets/sample-run/model_metrics_with_baseline.csv`
+- `docs/demo-assets/sample-run/training_summary.json`
+- `docs/demo-assets/sample-run/plots/roc_curves.png`
+- `docs/demo-assets/sample-run/plots/random_forest_confusion_matrix.png`
+
 ## Option 2: Run With the Real Public Dataset
 
 Download `creditcard.csv` from Kaggle and place it here:
@@ -154,6 +161,19 @@ pytest
 ```
 
 The tests use the small generated dataset so they do not require the large public CSV.
+
+## Interview Proof
+
+The repo includes tests, CI, and a quick training smoke test:
+
+- tests: `tests/`
+- workflow: `.github/workflows/ci.yml`
+- proof notes: `docs/model-results.md`
+- sample run artifacts: `docs/demo-assets/sample-run/`
+
+Safe resume wording:
+
+> Built a reusable scikit-learn fraud detection pipeline with data loading, cleaning, stratified splitting, EDA plots, model comparison, imbalanced-class metrics, baseline comparison, model saving, and tests.
 
 ## Resume-Ready Bullets
 
