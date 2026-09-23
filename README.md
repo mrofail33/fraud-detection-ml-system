@@ -138,6 +138,28 @@ This project demonstrates that issue by saving `outputs/model_metrics_with_basel
 
 For fraud detection, recall, precision, F1, confusion matrices, and ROC-AUC are more informative than accuracy alone.
 
+## Measured Results
+
+Real-data run completed on 2026-09-23 using the OpenML mirror of the ULB / Worldline credit-card fraud dataset. Raw evidence is saved in `docs/benchmark-results/`.
+
+| Dataset rows | Fraud rows | Fraud rate | Test rows | Test fraud rows | Best model by F1 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| 284,807 | 492 | 0.173% | 56,962 | 98 | Random Forest |
+
+| Model | Precision | Recall | F1 | ROC-AUC | Confusion matrix `(TN, FP, FN, TP)` |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Random Forest | 0.667 | 0.857 | 0.750 | 0.978 | `(56822, 42, 14, 84)` |
+| Gradient Boosting | 0.753 | 0.745 | 0.749 | 0.893 | `(56840, 24, 25, 73)` |
+| Logistic Regression | 0.059 | 0.918 | 0.110 | 0.971 | `(55417, 1447, 8, 90)` |
+
+Evidence files:
+
+- `docs/benchmark-results/training_summary_2026-09-23.json`
+- `docs/benchmark-results/model_metrics_2026-09-23.csv`
+- `docs/benchmark-results/model_metrics_with_baseline_2026-09-23.csv`
+- `docs/benchmark-results/cross_validation_metrics_2026-09-23.csv`
+- `docs/benchmark-results/confusion_matrices_2026-09-23.json`
+
 ## Prediction CLI
 
 After training, run a lightweight prediction:
@@ -215,9 +237,9 @@ Safe resume wording:
 
 ## Resume-Ready Bullets
 
-- Built an end-to-end fraud detection machine-learning pipeline using Python, pandas, NumPy, scikit-learn, and matplotlib.
-- Performed data cleaning, missing-value handling, feature selection, stratified train/test splitting, and exploratory analysis on imbalanced transaction data.
-- Trained and compared Logistic Regression, Random Forest, and Gradient Boosting classifiers using accuracy, precision, recall, F1 score, ROC-AUC, confusion matrices, and ROC curves.
+- Built an end-to-end fraud detection pipeline for 284,807 credit-card transactions with a 0.173% fraud rate, as measured by an OpenML real-data run, by combining data cleaning, stratified splitting, model comparison, saved artifacts, and tests.
+- Identified Random Forest as the strongest model by F1 score, achieving 0.667 precision, 0.857 recall, 0.750 F1, and 0.978 ROC-AUC on a 56,962-row test split.
+- Compared Logistic Regression, Random Forest, and Gradient Boosting with precision, recall, F1, ROC-AUC, ROC curves, and raw confusion matrices saved under `docs/benchmark-results/`.
 - Added cross-validation, feature importance export, a FastAPI `/predict` endpoint, and Docker packaging for a simple transaction-to-prediction demo.
 - Demonstrated why accuracy is misleading for imbalanced fraud detection by comparing models against an always-legitimate baseline.
 - Packaged the project with reusable source modules, reproducible setup instructions, saved plots, saved model artifacts, and automated tests.

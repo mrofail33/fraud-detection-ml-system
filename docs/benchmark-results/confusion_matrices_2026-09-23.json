@@ -1,0 +1,28 @@
+{
+  "dataset_rows": 284807,
+  "fraud_count": 492,
+  "fraud_rate": 0.001727485630620034,
+  "test_rows": 56962,
+  "test_fraud_count": 98,
+  "best_model_by_f1": "Random Forest",
+  "confusion_matrices": {
+    "Logistic Regression": {
+      "tn": 55417,
+      "fp": 1447,
+      "fn": 8,
+      "tp": 90
+    },
+    "Random Forest": {
+      "tn": 56822,
+      "fp": 42,
+      "fn": 14,
+      "tp": 84
+    },
+    "Gradient Boosting": {
+      "tn": 56840,
+      "fp": 24,
+      "fn": 25,
+      "tp": 73
+    }
+  }
+}

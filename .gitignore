@@ -10,10 +10,7 @@ env/
 data/*.csv
 data/*.zip
 data/*.parquet
-outputs/models/*.joblib
-outputs/plots/*.png
-outputs/*.csv
-outputs/*.json
+outputs/
 
 .DS_Store
 .env
