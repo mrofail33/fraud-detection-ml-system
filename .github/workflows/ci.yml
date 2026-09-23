@@ -20,3 +20,5 @@ jobs:
         run: pytest -q
       - name: Run quick training smoke test
         run: python -m fraud_detection.train --use-sample --output-dir outputs_smoke
+      - name: Check FastAPI app import
+        run: python -c "from fraud_detection.api import app; print(app.title)"

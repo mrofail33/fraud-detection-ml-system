@@ -37,6 +37,8 @@
   "best_model": "Random Forest",
   "metrics_path": "docs\\demo-assets\\sample-run\\model_metrics.csv",
   "comparison_path": "docs\\demo-assets\\sample-run\\model_metrics_with_baseline.csv",
+  "cross_validation_path": "docs\\demo-assets\\sample-run\\cross_validation_metrics.csv",
+  "feature_importance_path": "docs\\demo-assets\\sample-run\\feature_importance.csv",
   "model_path": "docs\\demo-assets\\sample-run\\models\\best_model.joblib",
   "plots_dir": "docs\\demo-assets\\sample-run\\plots"
 }

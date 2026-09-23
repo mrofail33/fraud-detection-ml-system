@@ -23,7 +23,9 @@ from fraud_detection.data import (
 )
 from fraud_detection.eda import run_eda
 from fraud_detection.modeling import (
+    cross_validate_models,
     evaluate_all_legitimate_baseline,
+    get_feature_importance,
     plot_confusion_matrices,
     plot_roc_curves,
     save_model,
@@ -87,6 +89,12 @@ def main() -> None:
         random_state=args.random_state,
     )
 
+    cv_metrics = cross_validate_models(
+        df[feature_columns],
+        df[TARGET_COLUMN],
+        random_state=args.random_state,
+    )
+
     trained_models, metrics = train_and_evaluate_models(
         X_train, X_test, y_train, y_test, random_state=args.random_state
     )
@@ -95,12 +103,16 @@ def main() -> None:
 
     metrics_path = output_dir / "model_metrics.csv"
     comparison_path = output_dir / "model_metrics_with_baseline.csv"
+    cv_path = output_dir / "cross_validation_metrics.csv"
     metrics.to_csv(metrics_path, index=False)
     comparison.to_csv(comparison_path, index=False)
+    cv_metrics.to_csv(cv_path, index=False)
 
     best_model_name = metrics.iloc[0]["model"]
     best_model = trained_models[best_model_name]
     save_model(best_model, feature_columns, models_dir / MODEL_FILENAME)
+    feature_importance = get_feature_importance(best_model, feature_columns)
+    feature_importance.to_csv(output_dir / "feature_importance.csv", index=False)
 
     plot_confusion_matrices(trained_models, X_test, y_test, plots_dir)
     plot_roc_curves(trained_models, X_test, y_test, plots_dir / "roc_curves.png")
@@ -113,6 +125,8 @@ def main() -> None:
         "best_model": best_model_name,
         "metrics_path": str(metrics_path),
         "comparison_path": str(comparison_path),
+        "cross_validation_path": str(cv_path),
+        "feature_importance_path": str(output_dir / "feature_importance.csv"),
         "model_path": str(models_dir / MODEL_FILENAME),
         "plots_dir": str(plots_dir),
     }

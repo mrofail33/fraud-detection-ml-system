@@ -21,6 +21,7 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
+from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -101,6 +102,39 @@ def train_and_evaluate_models(X_train, X_test, y_train, y_test, random_state: in
     return trained_models, metrics
 
 
+def cross_validate_models(X, y, random_state: int, folds: int = 3) -> pd.DataFrame:
+    """Compare models with stratified cross-validation on imbalanced labels."""
+
+    cv = StratifiedKFold(n_splits=folds, shuffle=True, random_state=random_state)
+    scoring = {
+        "precision": "precision",
+        "recall": "recall",
+        "f1": "f1",
+        "roc_auc": "roc_auc",
+    }
+    rows = []
+    for model_name, pipeline in build_models(random_state).items():
+        scores = cross_validate(
+            pipeline,
+            X,
+            y,
+            cv=cv,
+            scoring=scoring,
+            n_jobs=-1,
+            error_score="raise",
+        )
+        rows.append(
+            {
+                "model": model_name,
+                "precision_mean": scores["test_precision"].mean(),
+                "recall_mean": scores["test_recall"].mean(),
+                "f1_mean": scores["test_f1"].mean(),
+                "roc_auc_mean": scores["test_roc_auc"].mean(),
+            }
+        )
+    return pd.DataFrame(rows).sort_values("f1_mean", ascending=False).reset_index(drop=True)
+
+
 def evaluate_all_legitimate_baseline(y_test) -> dict[str, float]:
     y_pred = [0] * len(y_test)
     y_score = [0] * len(y_test)
@@ -127,6 +161,26 @@ def save_model(model, feature_columns: list[str], output_path: str | Path) -> No
     }
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(payload, output_path)
+
+
+def get_feature_importance(model, feature_columns: list[str]) -> pd.DataFrame:
+    """Return feature importance for tree models or coefficients for linear models."""
+
+    estimator = model.named_steps["model"]
+    if hasattr(estimator, "feature_importances_"):
+        scores = estimator.feature_importances_
+        metric = "importance"
+    elif hasattr(estimator, "coef_"):
+        scores = abs(estimator.coef_[0])
+        metric = "absolute_coefficient"
+    else:
+        return pd.DataFrame(columns=["feature", "score", "metric"])
+
+    return (
+        pd.DataFrame({"feature": feature_columns, "score": scores, "metric": metric})
+        .sort_values("score", ascending=False)
+        .reset_index(drop=True)
+    )
 
 
 def load_model(model_path: str | Path):

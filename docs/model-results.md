@@ -2,7 +2,7 @@
 
 Safe interview claim:
 
-> I built a reusable scikit-learn fraud detection pipeline that loads data, handles missing values, uses a stratified split, trains three classifiers, compares them with imbalanced-class metrics, saves plots, and exports the best model.
+> I built a reusable scikit-learn fraud detection pipeline that loads data, handles missing values, uses a stratified split, trains three classifiers, compares them with imbalanced-class metrics and cross-validation, saves feature importance and plots, exports the best model, and serves predictions through FastAPI.
 
 ## What the repo proves today
 
@@ -12,6 +12,8 @@ Safe interview claim:
 - The pipeline compares Logistic Regression, Random Forest, and Gradient Boosting.
 - The project reports precision, recall, F1, ROC-AUC, and an always-legitimate baseline.
 - `docs/demo-assets/sample-run/` contains a real sample training run with metrics, plots, and a saved model artifact.
+- The training command exports `cross_validation_metrics.csv` and `feature_importance.csv`.
+- `src/fraud_detection/api.py` exposes `/predict` for the final transaction-to-prediction demo.
 
 ## Included sample output
 
@@ -25,6 +27,14 @@ The included sample run selected Random Forest by F1 score on generated demo dat
 | Gradient Boosting | 0.9917 | 0.8824 | 0.8333 | 0.8571 | 0.9920 |
 
 ![Sample ROC curves](demo-assets/sample-run/plots/roc_curves.png)
+
+## Final ML Engineering Flow
+
+```text
+Transaction -> FastAPI -> trained model -> fraud prediction
+```
+
+This strengthens ML Engineering coverage without adding MLflow, feature stores, or a full MLOps platform.
 
 ## Important honesty note
 
@@ -48,8 +58,8 @@ Then summarize the final metrics here.
 - Real banking deployment.
 - Model monitoring.
 - Feature store.
-- Live inference service.
+- Production live inference service.
 
 ## Simple next upgrade
 
-Add a small FastAPI `/predict` endpoint that loads `outputs/models/best_model.joblib` and returns a fraud probability for one transaction.
+Add request logging and a small batch-prediction endpoint after the single-transaction demo is stable.

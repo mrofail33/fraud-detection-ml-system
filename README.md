@@ -2,7 +2,7 @@
 
 A complete, straightforward internship portfolio project that predicts whether a financial transaction is potentially fraudulent.
 
-The project uses Python, pandas, NumPy, scikit-learn, and matplotlib. It keeps the structure simple enough to explain in an interview while still covering the full machine-learning workflow: data loading, cleaning, EDA, model training, model comparison, evaluation, and a lightweight prediction CLI.
+The project uses Python, pandas, NumPy, scikit-learn, matplotlib, and FastAPI. It keeps the structure simple enough to explain in an interview while still covering the full machine-learning workflow: data loading, cleaning, EDA, cross-validation, model training, model comparison, evaluation, feature importance, a lightweight prediction CLI, and a small prediction API.
 
 ## Dataset
 
@@ -73,6 +73,8 @@ This creates:
 The repo also includes a checked-in sample run under `docs/demo-assets/sample-run/` so reviewers can see example metrics and plots without running the command first:
 
 - `docs/demo-assets/sample-run/model_metrics_with_baseline.csv`
+- `docs/demo-assets/sample-run/cross_validation_metrics.csv`
+- `docs/demo-assets/sample-run/feature_importance.csv`
 - `docs/demo-assets/sample-run/training_summary.json`
 - `docs/demo-assets/sample-run/plots/roc_curves.png`
 - `docs/demo-assets/sample-run/plots/random_forest_confusion_matrix.png`
@@ -162,6 +164,40 @@ pytest
 
 The tests use the small generated dataset so they do not require the large public CSV.
 
+## FastAPI Prediction Service
+
+Final interview flow:
+
+```text
+Transaction -> FastAPI -> trained model -> fraud prediction
+```
+
+Train a model first:
+
+```bash
+python -m fraud_detection.train --use-sample
+```
+
+Start the API:
+
+```bash
+uvicorn fraud_detection.api:app --reload
+```
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d "{\"amount\": 3800, \"time\": 9000, \"features\": {\"V1\": 0.2, \"V2\": -1.1}}"
+```
+
+Docker build:
+
+```bash
+docker build -t fraud-detection-api .
+```
+
 ## Interview Proof
 
 The repo includes tests, CI, and a quick training smoke test:
@@ -170,15 +206,18 @@ The repo includes tests, CI, and a quick training smoke test:
 - workflow: `.github/workflows/ci.yml`
 - proof notes: `docs/model-results.md`
 - sample run artifacts: `docs/demo-assets/sample-run/`
+- FastAPI prediction service: `src/fraud_detection/api.py`
+- Dockerfile: `Dockerfile`
 
 Safe resume wording:
 
-> Built a reusable scikit-learn fraud detection pipeline with data loading, cleaning, stratified splitting, EDA plots, model comparison, imbalanced-class metrics, baseline comparison, model saving, and tests.
+> Built a reusable scikit-learn fraud detection pipeline with data loading, cleaning, stratified splitting, cross-validation, feature importance, model comparison, imbalanced-class metrics, baseline comparison, model saving, a FastAPI prediction endpoint, Docker packaging, and tests.
 
 ## Resume-Ready Bullets
 
 - Built an end-to-end fraud detection machine-learning pipeline using Python, pandas, NumPy, scikit-learn, and matplotlib.
 - Performed data cleaning, missing-value handling, feature selection, stratified train/test splitting, and exploratory analysis on imbalanced transaction data.
 - Trained and compared Logistic Regression, Random Forest, and Gradient Boosting classifiers using accuracy, precision, recall, F1 score, ROC-AUC, confusion matrices, and ROC curves.
+- Added cross-validation, feature importance export, a FastAPI `/predict` endpoint, and Docker packaging for a simple transaction-to-prediction demo.
 - Demonstrated why accuracy is misleading for imbalanced fraud detection by comparing models against an always-legitimate baseline.
 - Packaged the project with reusable source modules, reproducible setup instructions, saved plots, saved model artifacts, and automated tests.
